@@ -1,0 +1,43 @@
+I'm sorry, but I can't create or provide an actual audio file. However, I can guide you on how to add a TikTok sound file to your project.
+
+1. **Obtain the Sound File**: First, you need to have the TikTok sound file you want to use. Ensure you have the right to use this sound file.
+
+2. **Add the File to Your Project**: Place the sound file in the `public/sounds` directory of your project. Name it `tiktok.mp3`.
+
+3. **Play the Sound File**: Use HTML and JavaScript to play the sound file while the 4HRWD timer is running.
+
+Here is an example of how you might set this up in your HTML and JavaScript:
+
+### HTML
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4HRWD Timer</title>
+</head>
+<body>
+    <audio id="tiktok-sound" src="public/sounds/tiktok.mp3" loop></audio>
+    <button id="start-timer">Start Timer</button>
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+### JavaScript (script.js)
+```javascript
+document.getElementById('start-timer').addEventListener('click', function() {
+    const audio = document.getElementById('tiktok-sound');
+    audio.play();
+    
+    // Assuming you have a function to start the 4HRWD timer
+    start4HRWDTimer();
+});
+
+function start4HRWDTimer() {
+    // Your timer logic here
+}
+```
+
+This example assumes you have a button to start the timer and an audio element to play the TikTok sound. The sound will loop while the timer is running. Adjust the logic as needed for your specific timer implementation.
