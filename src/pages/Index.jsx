@@ -80,9 +80,9 @@ const Index = () => {
           title: "Break Time Over",
           description: "You better be back, you back?",
           status: "info",
-          duration: null,
+          duration: 10000, // Set a duration to automatically close the toast after 10 seconds
           isClosable: true,
-          position: "top",
+          position: "top-right", // Change position to top-right to avoid covering the timer
           onCloseComplete: () => {
             const responseTime = (Date.now() - ripTockStartTime) / 1000;
             setResponseTimes((prev) => [...prev, responseTime]);
