@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Container, Text, VStack, Button, HStack, useToast } from "@chakra-ui/react";
+import { Container, Text, VStack, Button, HStack, useToast, Box } from "@chakra-ui/react";
 
 const Index = () => {
   const [timer, setTimer] = useState(14400); // 4 hours in seconds
@@ -13,6 +13,10 @@ const Index = () => {
   const [ripTock, setRipTock] = useState(300); // 5 minutes in seconds
   const [isRipTockRunning, setIsRipTockRunning] = useState(false);
   const [ripTockCount, setRipTockCount] = useState(0);
+  const [isTikTokSoundOn, setIsTikTokSoundOn] = useState(true);
+  const [isDingSoundOn, setIsDingSoundOn] = useState(true);
+  const [responseTimes, setResponseTimes] = useState([]);
+  const [ripTockStartTime, setRipTockStartTime] = useState(null);
   const timerRef = useRef(null);
   const stopwatchRef = useRef(null);
   const ripTockRef = useRef(null);
@@ -71,6 +75,7 @@ const Index = () => {
         setRipTock(300);
         setIsRipTockRunning(true);
       } else {
+        setRipTockStartTime(Date.now());
         toast({
           title: "Break Time Over",
           description: "You better be back, you back?",
@@ -79,15 +84,53 @@ const Index = () => {
           isClosable: true,
           position: "top",
           onCloseComplete: () => {
+            const responseTime = (Date.now() - ripTockStartTime) / 1000;
+            setResponseTimes((prev) => [...prev, responseTime]);
             setRipTock(300);
             setIsRipTockRunning(false);
             setIsTimerRunning(true);
             setRipTockCount(0);
           },
+          action: (
+            <Button colorScheme="teal" onClick={() => {
+              const responseTime = (Date.now() - ripTockStartTime) / 1000;
+              setResponseTimes((prev) => [...prev, responseTime]);
+              setRipTock(300);
+              setIsRipTockRunning(false);
+              setIsTimerRunning(true);
+              setRipTockCount(0);
+              toast.closeAll();
+            }}>
+              Yes
+            </Button>
+          ),
         });
       }
     }
-  }, [ripTock, ripTockCount, toast]);
+  }, [ripTock, ripTockCount, toast, ripTockStartTime]);
+
+  useEffect(() => {
+    let tikTokAudio;
+    if (isTimerRunning && isTikTokSoundOn) {
+      tikTokAudio = new Audio('/sounds/tiktok.mp3');
+      tikTokAudio.loop = true;
+      tikTokAudio.play();
+    } else if (tikTokAudio) {
+      tikTokAudio.pause();
+    }
+    return () => {
+      if (tikTokAudio) {
+        tikTokAudio.pause();
+      }
+    };
+  }, [isTimerRunning, isTikTokSoundOn]);
+
+  useEffect(() => {
+    if (ripTock === 0 && isDingSoundOn) {
+      const dingAudio = new Audio('/sounds/ding.mp3');
+      dingAudio.play();
+    }
+  }, [ripTock, isDingSoundOn]);
 
   const formatTime = (seconds) => {
     const hrs = Math.floor(seconds / 3600);
@@ -114,6 +157,8 @@ const Index = () => {
       setIsRipTockRunning(true);
     }
   };
+
+  const progressPercentage = ((14400 - timer) / 14400) * 100;
 
   return (
     <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
@@ -143,6 +188,24 @@ const Index = () => {
             Your goal for tomorrow: Beat {formatTime(goalTime)}
           </Text>
         )}
+        <Text fontSize="2xl">rip.tock Timer</Text>
+        <Text fontSize="4xl">{formatTime(ripTock)}</Text>
+        <HStack spacing={4}>
+          <Button colorScheme="teal" onClick={() => setIsDingSoundOn(!isDingSoundOn)}>
+            {isDingSoundOn ? "Mute Ding" : "Unmute Ding"}
+          </Button>
+        </HStack>
+        <HStack spacing={4}>
+          <Button colorScheme="teal" onClick={() => setIsTikTokSoundOn(!isTikTokSoundOn)}>
+            {isTikTokSoundOn ? "Mute TikTok" : "Unmute TikTok"}
+          </Button>
+        </HStack>
+        <Text fontSize="xl" color="green.500">
+          Average Response Time: {responseTimes.length > 0 ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(2) : "N/A"} seconds
+        </Text>
+        <Box width="100%" bg="gray.200" height="10px" mt={4}>
+          <Box width={`${progressPercentage}%`} bg="teal.500" height="100%" />
+        </Box>
       </VStack>
     </Container>
   );
