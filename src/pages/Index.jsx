@@ -141,7 +141,7 @@ const Index = () => {
 
   const handleTimerStartPause = () => {
     if (!isTimerRunning) {
-      if (stopwatch === 0) {
+      if (!isStopwatchRunning) {
         setIsStopwatchRunning(true);
       }
       setIsTimerRunning(true);
