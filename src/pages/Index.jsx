@@ -37,8 +37,11 @@ const Index = () => {
   useEffect(() => {
     if (isStopwatchRunning) {
       stopwatchRef.current = setInterval(() => {
-        setStopwatch((prev) => prev + 1);
-        localStorage.setItem("stopwatch", stopwatch + 1);
+        setStopwatch((prev) => {
+          const newTime = prev + 1;
+          localStorage.setItem("stopwatch", newTime);
+          return newTime;
+        });
       }, 1000);
     } else {
       clearInterval(stopwatchRef.current);
@@ -141,7 +144,7 @@ const Index = () => {
 
   const handleTimerStartPause = () => {
     if (!isTimerRunning) {
-      if (stopwatch === 0) {
+      if (!isStopwatchRunning) {
         setIsStopwatchRunning(true);
       }
       setIsTimerRunning(true);
