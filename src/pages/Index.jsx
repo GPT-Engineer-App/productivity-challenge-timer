@@ -167,6 +167,7 @@ const Index = () => {
   };
 
   const progressPercentage = ((sliderValue - timer) / sliderValue) * 100;
+  const ripTockProgressPercentage = ((300 - ripTock) / 300) * 100;
 
   return (
     <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
@@ -210,6 +211,9 @@ const Index = () => {
         )}
         <Text fontSize="2xl">rip.tock Timer</Text>
         <Text fontSize="4xl">{formatTime(ripTock)}</Text>
+        <Box width="100%" bg="yellow.200" height="30px" mt={4}>
+          <Box width={`${ripTockProgressPercentage}%`} bg="yellow.500" height="100%" />
+        </Box>
         <HStack spacing={4}>
           <Button colorScheme="teal" onClick={() => setIsDingSoundOn(!isDingSoundOn)}>
             {isDingSoundOn ? "Mute Ding" : "Unmute Ding"}
