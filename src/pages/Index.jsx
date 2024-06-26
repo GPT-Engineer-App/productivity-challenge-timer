@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Container, Text, VStack, Button, HStack, useToast, Box } from "@chakra-ui/react";
+import { Container, Text, VStack, Button, HStack, useToast, Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb } from "@chakra-ui/react";
 
 const Index = () => {
-  const [timer, setTimer] = useState(14400); // 4 hours in seconds
+  const [sliderValue, setSliderValue] = useState(14400);
+  const [timer, setTimer] = useState(sliderValue);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [stopwatch, setStopwatch] = useState(() => {
     const savedTime = localStorage.getItem("stopwatch");
@@ -135,6 +136,10 @@ const Index = () => {
     }
   }, [ripTock, isDingSoundOn]);
 
+  useEffect(() => {
+    setTimer(sliderValue);
+  }, [sliderValue]);
+
   const formatTime = (seconds) => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
@@ -161,18 +166,27 @@ const Index = () => {
     }
   };
 
-  const progressPercentage = ((14400 - timer) / 14400) * 100;
+  const progressPercentage = ((sliderValue - timer) / sliderValue) * 100;
 
   return (
     <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
       <VStack spacing={4}>
+        <Box width="100%" bg="gray.200" height="20px" mt={4}>
+          <Box width={`${progressPercentage}%`} bg="teal.500" height="100%" />
+        </Box>
+        <Slider aria-label="slider-ex-1" defaultValue={14400} min={0} max={14400} step={60} onChange={(val) => setSliderValue(val)}>
+          <SliderTrack>
+            <SliderFilledTrack />
+          </SliderTrack>
+          <SliderThumb />
+        </Slider>
         <Text fontSize="2xl">4-Hour Timer</Text>
         <Text fontSize="4xl">{formatTime(timer)}</Text>
         <HStack spacing={4}>
           <Button colorScheme="teal" onClick={handleTimerStartPause}>
             {isTimerRunning ? "Pause" : "Start"}
           </Button>
-          <Button colorScheme="red" onClick={() => setTimer(14400)}>
+          <Button colorScheme="red" onClick={() => setTimer(sliderValue)}>
             Reset
           </Button>
         </HStack>
@@ -186,6 +200,9 @@ const Index = () => {
             Reset
           </Button>
         </HStack>
+        <Button colorScheme="red" onClick={() => setStopwatch(0)}>
+          TIME WAITS FOR NO MAN
+        </Button>
         {goalTime !== null && (
           <Text fontSize="xl" color="green.500">
             Your goal for tomorrow: Beat {formatTime(goalTime)}
@@ -206,9 +223,6 @@ const Index = () => {
         <Text fontSize="xl" color="green.500">
           Average Response Time: {responseTimes.length > 0 ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(2) : "N/A"} seconds
         </Text>
-        <Box width="100%" bg="gray.200" height="10px" mt={4}>
-          <Box width={`${progressPercentage}%`} bg="teal.500" height="100%" />
-        </Box>
       </VStack>
     </Container>
   );
