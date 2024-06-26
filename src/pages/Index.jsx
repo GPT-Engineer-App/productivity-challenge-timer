@@ -37,8 +37,11 @@ const Index = () => {
   useEffect(() => {
     if (isStopwatchRunning) {
       stopwatchRef.current = setInterval(() => {
-        setStopwatch((prev) => prev + 1);
-        localStorage.setItem("stopwatch", stopwatch + 1);
+        setStopwatch((prev) => {
+          const newTime = prev + 1;
+          localStorage.setItem("stopwatch", newTime);
+          return newTime;
+        });
       }, 1000);
     } else {
       clearInterval(stopwatchRef.current);
